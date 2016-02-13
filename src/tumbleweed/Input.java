@@ -148,17 +148,83 @@ public class Input {
 		for (int i = 0; i < orders.length; i++) {
 			sort.add(i);
 		}
-		sort.sort(new Comparator<Integer>() {
-			public int compare(Integer o1, Integer o2) {
-				int dist0 = 0;
-				dist0 += (orders[o1].x - cols/2)*(orders[o1].x - cols/2);
-				dist0 += (orders[o1].y - rows/2)*(orders[o1].y - rows/2);
-				int dist1 = 0;
-				dist1 += (orders[o2].x - cols/2)*(orders[o2].x - cols/2);
-				dist1 += (orders[o2].y - rows/2)*(orders[o2].y - rows/2);
-				return dist1 - dist0;
-			}
-		});
+		
+		
+		int mode = 0;
+		
+		switch(mode) {
+			case 0://random order
+				Collections.shuffle(sort);
+				break;
+				
+			case 1://manhattan distance to center, closest last
+				sort.sort(new Comparator<Integer>() {
+					public int compare(Integer o1, Integer o2) {
+						int dist0 = 0;
+						dist0 += Math.abs(orders[o1].x - cols/2);
+						dist0 += Math.abs(orders[o1].y - rows/2);
+						int dist1 = 0;
+						dist1 += Math.abs(orders[o2].x - cols/2);
+						dist1 += Math.abs(orders[o2].y - rows/2);
+						return dist1 - dist0;
+					}
+				});
+				break;
+			
+			case 2://euclidean distance to center, closest last
+				sort.sort(new Comparator<Integer>() {
+					public int compare(Integer o1, Integer o2) {
+						int dist0 = 0;
+						dist0 += (orders[o1].x - cols/2)*(orders[o1].x - cols/2);
+						dist0 += (orders[o1].y - rows/2)*(orders[o1].y - rows/2);
+						int dist1 = 0;
+						dist1 += (orders[o2].x - cols/2)*(orders[o2].x - cols/2);
+						dist1 += (orders[o2].y - rows/2)*(orders[o2].y - rows/2);
+						return dist1 - dist0;
+					}
+				});
+				break;
+			
+			case 3://manhattan distance to nearest warehouse, closes first
+				int dist[] = new int[orders.length];
+				Arrays.fill(dist, Integer.MAX_VALUE);
+				for(int i = 0; i < orders.length; i++) {
+					for(int j = 0; j < W; j++) {
+						int t = 0;
+						t += Math.abs(w_x[j] - orders[i].x);
+						t += Math.abs(w_y[j] - orders[i].y);
+						if(t > dist[i]) {
+							dist[i] = t;
+						}
+					}
+				}
+				sort.sort(new Comparator<Integer>() {
+					public int compare(Integer o1, Integer o2) {
+						return dist[o1] - dist[o2];
+					}
+				});
+				break;
+
+			case 4://euclidean distance to nearest warehouse, closes first
+				int dist[] = new int[orders.length];
+				Arrays.fill(dist, Integer.MAX_VALUE);
+				for(int i = 0; i < orders.length; i++) {
+					for(int j = 0; j < W; j++) {
+						int t = 0;
+						t += (w_x[j] - orders[i].x)*(w_x[j] - orders[i].x);
+						t += (w_y[j] - orders[i].y)*(w_y[j] - orders[i].y);
+						if(t > dist[i]) {
+							dist[i] = t;
+						}
+					}
+				}
+				sort.sort(new Comparator<Integer>() {
+					public int compare(Integer o1, Integer o2) {
+						return dist[o1] - dist[o2];
+					}
+				});
+				break;
+		}
 		
 		//copy stock array
 		int[][] stock = new int[w_stock.length][w_stock[0].length];
