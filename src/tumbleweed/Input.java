@@ -6,6 +6,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -186,41 +187,41 @@ public class Input {
 				break;
 			
 			case 3://manhattan distance to nearest warehouse, closes first
-				int dist[] = new int[orders.length];
-				Arrays.fill(dist, Integer.MAX_VALUE);
+				int order_dist[] = new int[orders.length];
+				Arrays.fill(order_dist, Integer.MAX_VALUE);
 				for(int i = 0; i < orders.length; i++) {
 					for(int j = 0; j < W; j++) {
 						int t = 0;
 						t += Math.abs(w_x[j] - orders[i].x);
 						t += Math.abs(w_y[j] - orders[i].y);
-						if(t > dist[i]) {
-							dist[i] = t;
+						if(t > order_dist[i]) {
+							order_dist[i] = t;
 						}
 					}
 				}
 				sort.sort(new Comparator<Integer>() {
 					public int compare(Integer o1, Integer o2) {
-						return dist[o1] - dist[o2];
+						return order_dist[o1] - order_dist[o2];
 					}
 				});
 				break;
 
 			case 4://euclidean distance to nearest warehouse, closes first
-				int dist[] = new int[orders.length];
-				Arrays.fill(dist, Integer.MAX_VALUE);
+				int order_dist2[] = new int[orders.length];
+				Arrays.fill(order_dist2, Integer.MAX_VALUE);
 				for(int i = 0; i < orders.length; i++) {
 					for(int j = 0; j < W; j++) {
 						int t = 0;
 						t += (w_x[j] - orders[i].x)*(w_x[j] - orders[i].x);
 						t += (w_y[j] - orders[i].y)*(w_y[j] - orders[i].y);
-						if(t > dist[i]) {
-							dist[i] = t;
+						if(t > order_dist2[i]) {
+							order_dist2[i] = t;
 						}
 					}
 				}
 				sort.sort(new Comparator<Integer>() {
 					public int compare(Integer o1, Integer o2) {
-						return dist[o1] - dist[o2];
+						return order_dist2[o1] - order_dist2[o2];
 					}
 				});
 				break;
